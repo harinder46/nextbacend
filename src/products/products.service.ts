@@ -1,35 +1,47 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import { Product } from "./product.model";
+
 
 @Injectable()
 export class ProductService {
     private products: Product[] = [];
+
+    constructor(@InjectModel('Product') private readonly productModel: Model<Product>) {}
  
-    insertProduct(title: string, desc: string, price: number) {
+    async insertProduct(title: string, description: string, price: number) {
         const prodId = Math.random().toString();
-        const newProduct = new Product(prodId, title, desc, price);
-        this.products.push(newProduct)
-        return prodId;
+        const newProduct = new this.productModel({
+            title,
+            description,
+            price,
+        });
+        const result = await newProduct.save();
+        // this.products.push(newProduct)
+        console.log(result);
+        return result.id as string;
     }
 
-    getProducts(){
-        return [...this.products];
+   async getProducts(){
+       const products = await this.productModel.find().exec();
+        return products;
     }
 
     getSingleProduct(productId: string){
         const product = this.findProduct(productId)[0];
         return {...product }
-        
+        console.log(productId)
         }
 
-    updateProduct(productId: string, title: string, desc: string, price: number){
+    updateProduct(productId: string, title: string, description: string, price: number){
         const [product, index] = this.findProduct(productId);
         const updatedProduct = {...product}
         if(title){
             updatedProduct.title = title;
         }
-        if(desc){
-            updatedProduct.description = desc;
+        if(description){
+            updatedProduct.description = description;
         }
         if(price){
             updatedProduct.price = price;

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch } from "@nestjs/common";
+import { Controller, Post, Body, Get, Param, Patch, HttpStatus, Res } from "@nestjs/common";
 import { ProductService } from "./products.service";
 
 @Controller('products')
@@ -7,21 +7,35 @@ export class ProductsController{
     constructor(private readonly productService: ProductService){}
    
     @Post()
-    addProduct(
+    async addProduct(
+        @Res() response,
         @Body('title') prodTitle: string,
         @Body('description') prodDesc: string,
         @Body('price') prodPrice: number,
-        ): any{
-const generatedId = this.productService.insertProduct(
+        ){
+        const generatedId = await this.productService.insertProduct(
             prodTitle, 
             prodDesc, 
             prodPrice
             );
-            return {id: generatedId };
+            // return {id: generatedId };
+            return response.status(HttpStatus.CREATED).json({
+                generatedId
+            })
+            
+            
     }
     @Get()
-    getAllProducts(){
-        return this.productService.getProducts();
+    async getAllProducts(){
+        const products = await this.productService.getProducts();
+        console.log("get api ", products)
+
+        return products.map((prod)=> ({
+            id: prod.id,
+            title: prod.title,
+            description: prod.description,
+            price: prod.price,
+        }));
     }
 
     @Get(':id')
