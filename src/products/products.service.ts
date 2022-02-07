@@ -28,15 +28,20 @@ export class ProductService {
         return products;
     }
 
-    getSingleProduct(productId: string){
-        const product = this.findProduct(productId)[0];
-        return {...product }
-        console.log(productId)
+    async getSingleProduct(productId: string){
+        const product = await this.findProduct(productId);
+        return {
+            id: product.id, 
+            title: product.title,
+            description: product.description,
+            price: product.price
+        }
         }
 
-    updateProduct(productId: string, title: string, description: string, price: number){
-        const [product, index] = this.findProduct(productId);
-        const updatedProduct = {...product}
+    async updatedProduct(productId: string, title: string, description: string, price: number){
+        // const [product, index] = this.findProduct(productId);
+        const updatedProduct = await this.findProduct(productId);
+        // const updatedProduct = {...product}
         if(title){
             updatedProduct.title = title;
         }
@@ -46,17 +51,30 @@ export class ProductService {
         if(price){
             updatedProduct.price = price;
         }
-        this.products[index] = updatedProduct;
+        updatedProduct.save();
 
     }
 
-    private findProduct(id: string): [Product, number]{
-        const productIndex = this.products.findIndex((prod)=> prod.id === id);
-        const product = this.products[productIndex]
+    async deleteProduct(id): Promise<Product> {
+        return await this.productModel.findByIdAndRemove(id);
+    }
+
+
+    private async findProduct(id: string): Promise<Product>{
+        const product = await this.productModel.findById(id);
         if (!product){
-            throw new NotFoundException('cloud not find product.');            
+            throw new NotFoundException('coud not find product.');            
         }
-        return [product, productIndex];
+        return product;
+        
+        
+    //     {
+    //     id: product.id,
+    //     title: product.title,
+    //     description: product.description,
+    //     price: product.price 
+    // }
+
     }
 
 }
