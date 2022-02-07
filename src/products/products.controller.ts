@@ -56,10 +56,11 @@ export class ProductsController{
         }
 
     @Delete(':id')
-    async deleteProduct(@Param('id') prodId: string){
+    async deleteProduct(@Res() response,  
+        @Param('id') prodId: string){
         const product = await this.productService.deleteProduct(prodId);
-         return product;
+         return response.status(HttpStatus.OK).json({
+            product
+        })
     }
-
-
 }

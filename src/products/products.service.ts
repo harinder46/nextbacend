@@ -42,6 +42,23 @@ export class ProductService {
         // const [product, index] = this.findProduct(productId);
         const updatedProduct = await this.findProduct(productId);
         // const updatedProduct = {...product}
+
+// async create(RegisterDTO: RegisterDTO) {
+//     const { email } = RegisterDTO;
+//     const user = await this.userModel.findOne({ email });
+//     if (user) {
+//       throw new HttpException('user already exists', HttpStatus.BAD_REQUEST);
+//     }
+//     const createdUser = new this.userModel(RegisterDTO);
+//     await createdUser.save();
+//     return this.sanitizeUser(createdUser);
+//   }
+// // return user object without password
+//   sanitizeUser(user: User) {
+//     const sanitized = user.toObject();
+//     delete sanitized['password'];
+//     return sanitized;
+//   }
         if(title){
             updatedProduct.title = title;
         }
@@ -56,7 +73,8 @@ export class ProductService {
     }
 
     async deleteProduct(id): Promise<Product> {
-        return await this.productModel.findByIdAndRemove(id);
+        const result = await this.productModel.findByIdAndRemove(id);
+        return result
     }
 
 
