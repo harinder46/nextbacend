@@ -19,7 +19,10 @@ export class AuthService {
             { expiresIn: '7d' }); //process.env.JWT_KEY //"success"
       }
 
-      async validateUser(payload: Payload) {
+    async validateUser(payload: Payload) {
         return await this.userService.findByPayload(payload);
-      }  
+      } 
+    
+    
+      
 }
