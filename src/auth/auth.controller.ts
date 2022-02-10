@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Get } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { UserService } from 'src/users/user.service';
 import { AuthService } from './auth.service';
 import { RegisterDTO } from '../users/register.dto';
@@ -12,18 +12,18 @@ export class AuthController {
         private authService: AuthService,
         
       ) {}
- @Get("onlyauth")
- @UseGuards(AuthGuard("jwt"))
+    @Get("onlyauth")
+    @UseGuards(AuthGuard("jwt"))
  
-  async hiddenInformation(){
+     async hiddenInformation(){
     return  "hidden information";
-  }
+      }
   
        @Get("anyone")
 
-async publicInformation(){
-return  "this can be seen by anyone";
-}
+     async publicInformation(){
+     return  "this can be seen by anyone";
+     }
 
     @Post('register')
     async register(@Body() RegisterDTO: RegisterDTO) {
@@ -46,6 +46,15 @@ return  "this can be seen by anyone";
       return { user, token};
       // all change
     }
+   
+    // @Post('forgot-password')
+    // async forgotPassword(@Body() body){
+    //   if(!body.email){
+    //     throw new HttpException({message: "Email is required"}, HttpStatus.BAD_REQUEST);
+    //   }
+    //   return await this.authService.forgotPassword(body.email);
+
+    // }
 
 }
 

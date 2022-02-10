@@ -6,12 +6,15 @@ import { RegisterDTO } from './register.dto';
 import { LoginDTO } from 'src/auth/login.dto';
 import * as bcrypt from 'bcrypt';
 import { Payload } from 'src/auth/payload';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
 
     constructor(
         @InjectModel('User')private userModel: Model<User>,
+        private mailService: MailService,
+
       ) {}
     
       async create(RegisterDTO: RegisterDTO) {
@@ -25,6 +28,11 @@ export class UserService {
         console.log(createdUser)
         return this.sanitizeUser(createdUser);
       }
+
+       async signUp(user : User) {
+      const token = Math.floor(1000 + Math.random()*9000).toString();
+      await this.mailService.SendUserConfirmation(user, token);
+    }    
 
       async findByLogin(UserDTO: LoginDTO) {
         const { email, password } = UserDTO;
@@ -49,4 +57,6 @@ export class UserService {
         const { email } = payload
         return await this.userModel.findOne({email});
     } 
+
+  
 }

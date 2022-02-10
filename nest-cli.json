@@ -1,4 +1,8 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assests": ["mail/templates/comfirmation.hbs"],
+    "watchAssests": true
+  }
 }
